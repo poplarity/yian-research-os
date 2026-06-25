@@ -1,0 +1,651 @@
+/* @settings
+name: Yian Research OS
+id: yian-research-os
+settings:
+  -
+    id: yro-accent
+    title: Accent
+    type: variable-color
+    format: hex
+    default: '#0f766e'
+  -
+    id: yro-ink
+    title: Ink
+    type: variable-color
+    format: hex
+    default: '#172033'
+  -
+    id: yro-soft
+    title: Soft Surface
+    type: variable-color
+    format: hex
+    default: '#f4f7f4'
+  -
+    id: yro-max-width
+    title: Page Width
+    type: variable-number
+    default: 1040
+    format: px
+*/
+
+.markdown-preview-view.home-research-os {
+  --yro-accent: #0f766e;
+  --yro-blue: #3867a6;
+  --yro-plum: #7f557d;
+  --yro-amber: #9a6a16;
+  --yro-ink: #172033;
+  --yro-soft: #f4f7f4;
+  --yro-line: color-mix(in srgb, var(--text-muted) 22%, transparent);
+  --yro-panel: color-mix(in srgb, var(--background-primary) 93%, var(--yro-soft));
+  --yro-panel-strong: color-mix(in srgb, var(--background-primary) 86%, var(--yro-soft));
+  --yro-radius: 8px;
+  color: var(--text-normal);
+}
+
+.theme-dark .markdown-preview-view.home-research-os {
+  --yro-ink: #d7e2ee;
+  --yro-soft: #18201f;
+  --yro-line: color-mix(in srgb, var(--text-muted) 30%, transparent);
+  --yro-panel: color-mix(in srgb, var(--background-primary) 88%, var(--yro-soft));
+  --yro-panel-strong: color-mix(in srgb, var(--background-primary) 78%, var(--yro-soft));
+}
+
+.markdown-preview-view.home-research-os .markdown-preview-sizer {
+  max-width: var(--yro-max-width, 1040px);
+  margin-inline: auto;
+  padding-bottom: 72px;
+}
+
+.markdown-preview-view.home-research-os .inline-title,
+.markdown-preview-view.home-research-os .metadata-container {
+  display: none;
+}
+
+.markdown-preview-view.home-research-os h1 {
+  position: relative;
+  margin: 0.45rem 0 1.25rem;
+  padding: 34px 38px;
+  overflow: hidden;
+  border: 1px solid var(--yro-line);
+  border-radius: var(--yro-radius);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--yro-soft) 86%, white), transparent 66%),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--yro-accent) 15%, transparent) 0 1px, transparent 1px 44px),
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--yro-blue) 10%, transparent) 0 1px, transparent 1px 34px),
+    linear-gradient(135deg, color-mix(in srgb, var(--yro-accent) 8%, var(--background-primary)), var(--background-primary));
+  color: var(--yro-ink);
+  font-size: 3.15rem;
+  font-weight: 780;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.markdown-preview-view.home-research-os h1::after {
+  content: "";
+  position: absolute;
+  inset: 18px 24px 18px auto;
+  width: min(36%, 360px);
+  opacity: 0.62;
+  background:
+    linear-gradient(115deg, transparent 0 18%, color-mix(in srgb, var(--yro-accent) 30%, transparent) 18% 19%, transparent 19% 36%, color-mix(in srgb, var(--yro-blue) 24%, transparent) 36% 37%, transparent 37% 100%),
+    repeating-linear-gradient(160deg, color-mix(in srgb, var(--yro-plum) 25%, transparent) 0 2px, transparent 2px 18px);
+  clip-path: polygon(18% 0, 100% 0, 82% 100%, 0 100%);
+}
+
+.markdown-preview-view.home-research-os h2 {
+  margin: 2rem 0 0.9rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--yro-line);
+  color: var(--yro-ink);
+  font-size: 1.22rem;
+  font-weight: 720;
+  letter-spacing: 0;
+}
+
+.markdown-preview-view.home-research-os .yro-control-shell {
+  display: grid;
+  gap: 14px;
+  margin: 0.8rem 0 1.5rem;
+}
+
+.markdown-preview-view.home-research-os .yro-create-panel,
+.markdown-preview-view.home-research-os .yro-capture-panel,
+.markdown-preview-view.home-research-os .yro-folder-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--yro-line);
+  border-radius: var(--yro-radius);
+  background: var(--yro-panel);
+}
+
+.markdown-preview-view.home-research-os .yro-create-panel {
+  grid-template-columns: minmax(160px, 0.9fr) minmax(180px, 1fr) minmax(280px, 1.4fr);
+  align-items: center;
+}
+
+.markdown-preview-view.home-research-os .yro-capture-panel {
+  grid-template-columns: minmax(170px, 0.82fr) minmax(260px, 1.35fr) minmax(210px, 0.82fr);
+  align-items: stretch;
+}
+
+.markdown-preview-view.home-research-os .yro-create-copy,
+.markdown-preview-view.home-research-os .yro-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.markdown-preview-view.home-research-os .yro-create-copy strong,
+.markdown-preview-view.home-research-os .yro-section-head strong {
+  color: var(--yro-ink);
+  font-size: 0.96rem;
+  font-weight: 740;
+}
+
+.markdown-preview-view.home-research-os .yro-create-copy span,
+.markdown-preview-view.home-research-os .yro-section-head span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.markdown-preview-view.home-research-os .yro-title-input,
+.markdown-preview-view.home-research-os .yro-capture-input,
+.markdown-preview-view.home-research-os .yro-reminder-date,
+.markdown-preview-view.home-research-os .yro-project-compose input {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--yro-line);
+  border-radius: var(--yro-radius);
+  background: var(--background-primary);
+  color: var(--text-normal);
+  font: inherit;
+}
+
+.markdown-preview-view.home-research-os .yro-capture-input {
+  min-height: 82px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.markdown-preview-view.home-research-os .yro-title-input:focus,
+.markdown-preview-view.home-research-os .yro-capture-input:focus,
+.markdown-preview-view.home-research-os .yro-reminder-date:focus,
+.markdown-preview-view.home-research-os .yro-project-compose input:focus {
+  border-color: color-mix(in srgb, var(--yro-accent) 60%, var(--yro-line));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--yro-accent) 15%, transparent);
+  outline: none;
+}
+
+.markdown-preview-view.home-research-os .yro-action-grid,
+.markdown-preview-view.home-research-os .yro-folder-grid {
+  display: grid;
+  gap: 9px;
+}
+
+.markdown-preview-view.home-research-os .yro-action-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.markdown-preview-view.home-research-os .yro-folder-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.markdown-preview-view.home-research-os .yro-action,
+.markdown-preview-view.home-research-os .yro-folder,
+.markdown-preview-view.home-research-os .yro-capture-actions button,
+.markdown-preview-view.home-research-os .yro-compose-actions button {
+  appearance: none;
+  border: 1px solid var(--yro-line);
+  border-radius: var(--yro-radius);
+  background: color-mix(in srgb, var(--background-primary) 94%, var(--yro-soft));
+  color: var(--text-normal);
+  font: inherit;
+  cursor: pointer;
+  transition: transform 150ms ease, border-color 150ms ease, background-color 150ms ease;
+}
+
+.markdown-preview-view.home-research-os .yro-action,
+.markdown-preview-view.home-research-os .yro-folder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  text-align: left;
+}
+
+.markdown-preview-view.home-research-os .yro-action {
+  min-height: 58px;
+  padding: 9px 11px;
+}
+
+.markdown-preview-view.home-research-os .yro-folder {
+  min-height: 72px;
+  padding: 10px 11px;
+}
+
+.markdown-preview-view.home-research-os .yro-action:hover,
+.markdown-preview-view.home-research-os .yro-folder:hover,
+.markdown-preview-view.home-research-os .yro-capture-actions button:hover,
+.markdown-preview-view.home-research-os .yro-compose-actions button:hover {
+  border-color: color-mix(in srgb, var(--yro-accent) 58%, var(--yro-line));
+  background: color-mix(in srgb, var(--background-primary) 84%, var(--yro-soft));
+  transform: translateY(-1px);
+}
+
+.markdown-preview-view.home-research-os .yro-action:disabled,
+.markdown-preview-view.home-research-os .yro-folder:disabled,
+.markdown-preview-view.home-research-os .yro-capture-actions button:disabled,
+.markdown-preview-view.home-research-os .yro-compose-actions button:disabled {
+  cursor: progress;
+  opacity: 0.62;
+  transform: none;
+}
+
+.markdown-preview-view.home-research-os .yro-action:focus-visible,
+.markdown-preview-view.home-research-os .yro-folder:focus-visible,
+.markdown-preview-view.home-research-os .yro-project-title:focus-visible,
+.markdown-preview-view.home-research-os .yro-capture-actions button:focus-visible,
+.markdown-preview-view.home-research-os .yro-compose-actions button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--yro-accent) 68%, white);
+  outline-offset: 2px;
+}
+
+.markdown-preview-view.home-research-os .yro-action strong,
+.markdown-preview-view.home-research-os .yro-folder strong {
+  overflow-wrap: anywhere;
+  color: var(--yro-ink);
+  font-size: 0.9rem;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+.markdown-preview-view.home-research-os .yro-action span,
+.markdown-preview-view.home-research-os .yro-folder span,
+.markdown-preview-view.home-research-os .yro-folder em {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-style: normal;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.markdown-preview-view.home-research-os .yro-capture-tools {
+  display: grid;
+  grid-template-rows: max-content max-content 1fr;
+  gap: 8px;
+  min-width: 0;
+}
+
+.markdown-preview-view.home-research-os .yro-capture-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.markdown-preview-view.home-research-os .yro-capture-actions button {
+  min-height: 36px;
+  padding: 7px 8px;
+  color: var(--yro-ink);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.markdown-preview-view.home-research-os .yro-mini-feed {
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1px solid color-mix(in srgb, var(--yro-line) 70%, transparent);
+  border-radius: var(--yro-radius);
+  background: color-mix(in srgb, var(--background-primary) 88%, var(--yro-soft));
+}
+
+.markdown-preview-view.home-research-os .yro-mini-feed strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--yro-ink);
+  font-size: 0.78rem;
+}
+
+.markdown-preview-view.home-research-os .yro-mini-feed ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-inline-start: 1rem;
+}
+
+.markdown-preview-view.home-research-os .yro-mini-feed li {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.markdown-preview-view.home-research-os .callout[data-callout="focus"] {
+  --callout-color: 15, 118, 110;
+  border: 1px solid var(--yro-line);
+  border-left: 3px solid var(--yro-accent);
+  border-radius: var(--yro-radius);
+  background: color-mix(in srgb, var(--background-primary) 94%, var(--yro-soft));
+  box-shadow: none;
+}
+
+.markdown-preview-view.home-research-os input[type="checkbox"] {
+  accent-color: var(--yro-accent);
+}
+
+.markdown-preview-view.home-research-os .yro-project-board {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.markdown-preview-view.home-research-os .yro-project-card {
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid var(--yro-line);
+  border-radius: var(--yro-radius);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--yro-accent) 5%, transparent), transparent 46%),
+    var(--yro-panel);
+}
+
+.markdown-preview-view.home-research-os .yro-empty-card {
+  color: var(--text-muted);
+}
+
+.markdown-preview-view.home-research-os .yro-project-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+}
+
+.markdown-preview-view.home-research-os .yro-project-titlebox {
+  min-width: 0;
+}
+
+.markdown-preview-view.home-research-os .yro-project-title {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--yro-ink);
+  font-size: 1.12rem;
+  font-weight: 760;
+  line-height: 1.25;
+  text-decoration: none;
+}
+
+.markdown-preview-view.home-research-os .yro-project-title:hover {
+  color: var(--yro-accent);
+}
+
+.markdown-preview-view.home-research-os .yro-project-head p {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.markdown-preview-view.home-research-os .yro-status-stack {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.markdown-preview-view.home-research-os .yro-status,
+.markdown-preview-view.home-research-os .yro-phase,
+.markdown-preview-view.home-research-os .yro-project-meta span {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-muted) 9%, transparent);
+  color: var(--text-muted);
+  font-size: 0.73rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.markdown-preview-view.home-research-os .yro-status {
+  background: color-mix(in srgb, var(--yro-accent) 14%, transparent);
+  color: color-mix(in srgb, var(--yro-accent) 82%, var(--text-normal));
+}
+
+.markdown-preview-view.home-research-os .yro-phase {
+  background: color-mix(in srgb, var(--yro-blue) 13%, transparent);
+  color: color-mix(in srgb, var(--yro-blue) 76%, var(--text-normal));
+}
+
+.markdown-preview-view.home-research-os .yro-progress-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 8px;
+}
+
+.markdown-preview-view.home-research-os .yro-progress {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-muted) 13%, transparent);
+}
+
+.markdown-preview-view.home-research-os .yro-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--yro-accent), var(--yro-blue));
+}
+
+.markdown-preview-view.home-research-os .yro-progress-row strong {
+  color: var(--yro-ink);
+  font-size: 0.92rem;
+}
+
+.markdown-preview-view.home-research-os .yro-project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.markdown-preview-view.home-research-os .yro-project-modules {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1fr;
+  gap: 14px;
+  padding-top: 2px;
+}
+
+.markdown-preview-view.home-research-os .yro-module {
+  min-width: 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--yro-accent);
+}
+
+.markdown-preview-view.home-research-os .yro-module-finding {
+  border-left-color: var(--yro-blue);
+}
+
+.markdown-preview-view.home-research-os .yro-module-idea {
+  border-left-color: var(--yro-plum);
+}
+
+.markdown-preview-view.home-research-os .yro-module h3 {
+  margin: 0 0 0.55rem;
+  color: var(--yro-ink);
+  font-size: 0.86rem;
+  font-weight: 730;
+  letter-spacing: 0;
+}
+
+.markdown-preview-view.home-research-os .yro-task-list,
+.markdown-preview-view.home-research-os .yro-finding-list,
+.markdown-preview-view.home-research-os .yro-idea-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.markdown-preview-view.home-research-os .yro-task-list li {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: 7px;
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.42;
+}
+
+.markdown-preview-view.home-research-os .yro-check {
+  display: inline-grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  margin-top: 1px;
+  border: 1px solid color-mix(in srgb, var(--text-muted) 45%, transparent);
+  border-radius: 4px;
+  color: white;
+  font-size: 0.68rem;
+  line-height: 1;
+}
+
+.markdown-preview-view.home-research-os .yro-task-list .is-done {
+  color: color-mix(in srgb, var(--text-muted) 68%, transparent);
+}
+
+.markdown-preview-view.home-research-os .yro-task-list .is-done .yro-check {
+  border-color: var(--yro-accent);
+  background: var(--yro-accent);
+}
+
+.markdown-preview-view.home-research-os .yro-task-list .is-done > span:last-child {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.markdown-preview-view.home-research-os .yro-finding-list li,
+.markdown-preview-view.home-research-os .yro-idea-list li {
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.42;
+  overflow-wrap: anywhere;
+}
+
+.markdown-preview-view.home-research-os .yro-finding-list time {
+  display: block;
+  margin-bottom: 2px;
+  color: color-mix(in srgb, var(--yro-blue) 72%, var(--text-muted));
+  font-size: 0.68rem;
+}
+
+.markdown-preview-view.home-research-os .yro-finding-list strong {
+  display: block;
+  color: color-mix(in srgb, var(--text-normal) 86%, var(--yro-ink));
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.markdown-preview-view.home-research-os .yro-finding-list span {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.7rem;
+}
+
+.markdown-preview-view.home-research-os .is-muted {
+  color: color-mix(in srgb, var(--text-muted) 72%, transparent);
+}
+
+.markdown-preview-view.home-research-os .yro-project-compose {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 9px;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 13px;
+  border-top: 1px solid var(--yro-line);
+}
+
+.markdown-preview-view.home-research-os .yro-compose-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: flex-end;
+}
+
+.markdown-preview-view.home-research-os .yro-compose-actions button {
+  min-height: 34px;
+  padding: 6px 10px;
+  color: var(--yro-ink);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .markdown-preview-view.home-research-os .yro-create-panel,
+  .markdown-preview-view.home-research-os .yro-capture-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .markdown-preview-view.home-research-os .yro-action-grid,
+  .markdown-preview-view.home-research-os .yro-capture-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .markdown-preview-view.home-research-os .yro-folder-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .markdown-preview-view.home-research-os .yro-project-modules {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .markdown-preview-view.home-research-os .markdown-preview-sizer {
+    padding-inline: 16px;
+  }
+
+  .markdown-preview-view.home-research-os h1 {
+    padding: 24px;
+    font-size: 2.2rem;
+  }
+
+  .markdown-preview-view.home-research-os h1::after {
+    inset: auto 12px 12px auto;
+    width: 58%;
+    height: 42%;
+  }
+
+  .markdown-preview-view.home-research-os .yro-action-grid,
+  .markdown-preview-view.home-research-os .yro-capture-actions,
+  .markdown-preview-view.home-research-os .yro-folder-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .markdown-preview-view.home-research-os .yro-project-head,
+  .markdown-preview-view.home-research-os .yro-project-compose {
+    grid-template-columns: 1fr;
+  }
+
+  .markdown-preview-view.home-research-os .yro-project-head {
+    display: grid;
+  }
+
+  .markdown-preview-view.home-research-os .yro-status-stack,
+  .markdown-preview-view.home-research-os .yro-compose-actions {
+    justify-content: flex-start;
+  }
+}

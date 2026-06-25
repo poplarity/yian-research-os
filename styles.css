@@ -1,0 +1,12 @@
+.yro-settings-note {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  line-height: 1.45;
+}
+
+.yro-settings-warning {
+  border-left: 3px solid var(--color-yellow);
+  padding-left: 10px;
+  color: var(--text-muted);
+}
+

@@ -1,0 +1,6 @@
+node_modules/
+.obsidian/
+.trash/
+.DS_Store
+npm-debug.log*
+yian-research-os-*.tgz

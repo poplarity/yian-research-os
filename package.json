@@ -1,0 +1,30 @@
+{
+  "name": "yian-research-os",
+  "version": "0.1.0",
+  "description": "A polished Obsidian research home dashboard for project tracking, daily writing, quick memos, reminders, and lab navigation.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "check": "tsc -noEmit -skipLibCheck",
+    "release:dry": "npm run build && ls -lh main.js manifest.json styles.css"
+  },
+  "keywords": [
+    "obsidian",
+    "obsidian-plugin",
+    "research",
+    "dashboard",
+    "dataview",
+    "lab-notebook"
+  ],
+  "author": "Yian Wang",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "builtin-modules": "^3.3.0",
+    "esbuild": "^0.28.1",
+    "obsidian": "^1.5.12",
+    "tslib": "^2.6.3",
+    "typescript": "^5.5.3"
+  }
+}

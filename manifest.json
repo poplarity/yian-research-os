@@ -1,0 +1,9 @@
+{
+  "id": "yian-research-os",
+  "name": "Yian Research OS",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Install and maintain a polished research home dashboard with project cards, daily essays, quick memos, reminders, and folder shortcuts.",
+  "author": "Yian Wang",
+  "isDesktopOnly": false
+}
