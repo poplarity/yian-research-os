@@ -1,18 +1,20 @@
 # Yian Research OS
 
-Yian Research OS is an Obsidian plugin that installs a polished research home dashboard into a vault. It packages the `HOME.md` workflow as a reusable plugin: project cards, daily essays, quick memos, reminders, folder shortcuts, and scoped visual styling.
+Yian Research OS is an Obsidian plugin that installs a polished research home dashboard into a vault. It packages the `HOME.md` workflow as a reusable plugin: a First Look overview, project cards, daily essays, quick memos, reminders, folder shortcuts, and scoped visual styling.
 
 The dashboard is still plain Markdown at rest. The plugin generates and refreshes the files, while you keep editing your projects, memos, and daily notes directly in Obsidian.
 
 ## Features
 
 - **Research home installer**: writes a ready-to-use `HOME.md` workbench.
+- **First Look overview**: adds an IFTO-HOME-inspired top screen with section navigation, today status, project/task widgets, and recent-note context.
 - **Scoped styling**: installs `.obsidian/snippets/home-research-os.css` and enables it.
 - **DataviewJS setup helper**: enables DataviewJS when the Dataview plugin is installed.
-- **Project management cards**: reads notes with `class: project` and renders progress, tasks, findings, and ideas.
+- **Project management board**: reads notes with `class: project` and renders progress, tasks, findings, ideas, metrics, and quick filters.
 - **Daily essay capture**: creates or opens `00 - System/02 - daily/YYYY-MM-DD.md`.
 - **Quick memo inbox**: creates or opens `00 - System/01 - memory/quick-memo.md`.
 - **Reminder inbox**: creates or opens `00 - System/01 - memory/reminders.md`.
+- **Common folder launchpad**: opens your lab notebook, project, literature, meeting, protocol, coding, and template folders with counts and update timestamps.
 - **Safe refresh**: backs up generated files before overwriting them.
 - **Configurable paths**: adjust note paths in the plugin settings tab.
 
@@ -25,7 +27,7 @@ The dashboard is still plain Markdown at rest. The plugin generates and refreshe
 ## Install From Source
 
 ```bash
-git clone https://github.com/YOUR_GITHUB_USER/yian-research-os.git
+git clone https://github.com/poplarity/yian-research-os.git
 cd yian-research-os
 npm install
 npm run build
@@ -71,8 +73,8 @@ gh repo create yian-research-os --public --source . --remote origin --push
 To create a release:
 
 ```bash
-git tag 0.1.0
-git push origin 0.1.0
+git tag 0.2.0
+git push origin 0.2.0
 ```
 
 The included GitHub Actions workflow builds and uploads `main.js`, `manifest.json`, and `styles.css` as release assets.
@@ -130,7 +132,8 @@ It also supports legacy sections such as `## 下一步`, `## 进度`, and `## �
 
 This plugin intentionally keeps the main experience as Markdown + DataviewJS + scoped CSS instead of a custom React view. That makes the home page easy to edit, diff, back up, and adapt.
 
+Version `0.2.0` borrows the spirit of IFTO-HOME's first-screen dashboard and widget layout, but the implementation is original and adapted to this plugin's research workflow. The source of truth stays in editable Markdown project notes rather than a separate opaque custom view.
+
 ## License
 
 MIT
-

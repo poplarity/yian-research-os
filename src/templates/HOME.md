@@ -15,7 +15,38 @@ tags:
 
 ```dataviewjs
 const today = window.moment ? window.moment().format("YYYY-MM-DD") : new Date().toISOString().slice(0, 10);
-const vaultName = app.vault.getName();
+const todayLabel = window.moment ? window.moment().format("YYYY年MM月DD日 dddd") : today;
+const toArray = (value) => value?.array ? value.array() : Array.from(value ?? []);
+const formatFileTime = (millis) => window.moment
+  ? window.moment(millis).format("MM-DD HH:mm")
+  : new Date(millis).toLocaleDateString();
+
+if (!window.__YRO_INPUT_FOCUS_GUARD__) {
+  window.__YRO_INPUT_FOCUS_GUARD__ = true;
+  const focusSelector = ".markdown-preview-view.home-research-os input:not([type='checkbox']), .markdown-preview-view.home-research-os textarea";
+  document.addEventListener("mousedown", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const editable = target.closest(focusSelector);
+    if (!editable) return;
+    event.stopPropagation();
+    window.setTimeout(() => editable.focus({ preventScroll: true }), 0);
+  }, true);
+  document.addEventListener("focusin", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement) || !target.matches(focusSelector)) return;
+    target.closest(".markdown-preview-view.home-research-os")?.classList.add("yro-has-input-focus");
+  });
+  document.addEventListener("focusout", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement) || !target.matches(focusSelector)) return;
+    window.setTimeout(() => {
+      if (!document.activeElement?.matches?.(focusSelector)) {
+        document.querySelector(".markdown-preview-view.home-research-os")?.classList.remove("yro-has-input-focus");
+      }
+    }, 20);
+  });
+}
 
 const notify = (message) => {
   try {
@@ -240,8 +271,140 @@ const dailyPath = `00 - System/02 - daily/${today}.md`;
 const memoPath = "00 - System/01 - memory/quick-memo.md";
 const reminderPath = "00 - System/01 - memory/reminders.md";
 
+const markdownFiles = app.vault.getMarkdownFiles();
+const projectPagesForOverview = dv.pages()
+  .where(page => page.class === "project" && !page.file.path.startsWith("99 - template/"))
+  .array();
+const activeProjectsForOverview = projectPagesForOverview.filter(page => String(page.status ?? "active") === "active");
+const priorityProjectsForOverview = [...activeProjectsForOverview]
+  .sort((a, b) => Number(a.priority ?? 99) - Number(b.priority ?? 99));
+const topProject = priorityProjectsForOverview[0] ?? activeProjectsForOverview[0] ?? projectPagesForOverview[0];
+const projectTasksForOverview = projectPagesForOverview.flatMap(page => toArray(page.file.tasks));
+const openProjectTaskCount = projectTasksForOverview.filter(task => !task.completed).length;
+const highPriorityCount = projectPagesForOverview.filter(page => Number(page.priority ?? 99) === 1).length;
+const dailyExists = Boolean(app.vault.getAbstractFileByPath(dailyPath));
+const readVaultText = async (path) => {
+  const file = app.vault.getAbstractFileByPath(path);
+  if (!file?.extension) return "";
+  return file.extension === "md" ? app.vault.read(file) : "";
+};
+const reminderText = await readVaultText(reminderPath);
+const openReminders = reminderText.split(/\r?\n/)
+  .map(line => line.trim())
+  .filter(line => /^-\s+\[\s\]\s+/.test(line))
+  .map(line => line.replace(/^-\s+\[\s\]\s+/, "").replace(/\s+#reminder\b/g, ""));
+const recentFiles = markdownFiles
+  .filter(file => [
+    "00 - System/02 - daily/",
+    "00 - System/01 - memory/",
+    "10 - Lab Notebook/",
+    "20 - Literature Notes/",
+    "30 - Protocols/",
+    "40 - Meetings/"
+  ].some(prefix => file.path.startsWith(prefix)))
+  .sort((a, b) => b.stat.mtime - a.stat.mtime)
+  .slice(0, 3);
+
 const shell = dv.el("div", "", { cls: "yro-control-shell" });
 shell.textContent = "";
+
+const scrollHomeTarget = (selector, headingText) => {
+  const root = shell.closest(".markdown-preview-view.home-research-os") ?? document;
+  let target = selector ? root.querySelector(selector) : null;
+  if (!target && headingText) {
+    target = Array.from(root.querySelectorAll("h2"))
+      .find(heading => heading.textContent?.trim() === headingText);
+  }
+  target?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+const firstLook = shell.createEl("section", { cls: "yro-first-look" });
+const firstNav = firstLook.createEl("nav", { cls: "yro-first-nav", attr: { "aria-label": "Research OS sections" } });
+for (const item of [
+  ["FIRST LOOK", ".yro-first-look", ""],
+  ["CAPTURE", ".yro-capture-panel", ""],
+  ["FOLDERS", ".yro-folder-panel", ""],
+  ["PROJECTS", "", "科研项目管理"],
+  ["FOCUS", "", "今日聚焦"]
+]) {
+  const button = firstNav.createEl("button", { text: item[0], attr: { type: "button" } });
+  button.addEventListener("click", () => scrollHomeTarget(item[1], item[2]));
+}
+
+const firstHero = firstLook.createEl("div", { cls: "yro-first-hero" });
+const firstCopy = firstHero.createEl("div", { cls: "yro-first-copy" });
+firstCopy.createEl("span", { cls: "yro-kicker", text: "FIRST LOOK" });
+firstCopy.createEl("strong", { text: "科研主页总览" });
+firstCopy.createEl("p", { text: "把今日捕获、项目推进、提醒事项和常用目录收束到一个可编辑主页。" });
+
+const firstRail = firstHero.createEl("div", { cls: "yro-first-rail" });
+firstRail.createEl("span", { text: todayLabel });
+firstRail.createEl("span", { text: topProject ? `重点: ${topProject.file.name}` : "重点: 等待新项目" });
+firstRail.createEl("span", { text: `${activeProjectsForOverview.length} active projects` });
+
+const widgetGrid = firstLook.createEl("div", { cls: "yro-widget-grid" });
+const addWidget = ({ label, value, meta, actionLabel, run, tone = "" }) => {
+  const card = widgetGrid.createEl("article", { cls: `yro-widget-card ${tone}`.trim() });
+  card.createEl("span", { cls: "yro-widget-label", text: label });
+  card.createEl("strong", { text: value });
+  card.createEl("p", { text: meta });
+  if (actionLabel && run) {
+    const button = card.createEl("button", { text: actionLabel, attr: { type: "button" } });
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      try {
+        await run();
+      } catch (error) {
+        console.error(error);
+        notify(`打开失败: ${error.message ?? error}`);
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+  return card;
+};
+
+addWidget({
+  label: "TODAY",
+  value: dailyExists ? "随笔已就绪" : "还未写随笔",
+  meta: dailyExists ? "继续补充今日观察和复盘。" : "创建今天的每日随笔，保留当天思路。",
+  actionLabel: "打开",
+  run: () => openOrCreate(dailyPath, dailyEssayContent()),
+  tone: "is-today"
+});
+addWidget({
+  label: "PROJECTS",
+  value: `${activeProjectsForOverview.length} active`,
+  meta: highPriorityCount ? `${highPriorityCount} 个 P1 项目需要优先关注。` : "项目按状态、阶段和优先级自动汇总。",
+  actionLabel: topProject ? "打开重点" : "新建项目",
+  run: () => topProject ? openVaultPath(topProject.file.path) : openOrCreate(`10 - Lab Notebook/10 - Projects/${today}_new_project.md`, projectContent(`${today}_new_project`)),
+  tone: "is-project"
+});
+addWidget({
+  label: "TASKS",
+  value: `${openProjectTaskCount} open`,
+  meta: openReminders.length ? `${openReminders.length} 条提醒仍未完成。` : "提醒清单当前没有未完成条目。",
+  actionLabel: "提醒",
+  run: () => openOrCreate(reminderPath, remindersContent()),
+  tone: "is-task"
+});
+const recentCard = addWidget({
+  label: "RECENT",
+  value: recentFiles[0]?.basename ?? "暂无更新",
+  meta: recentFiles.length ? `最近更新 ${formatFileTime(recentFiles[0].stat.mtime)}` : "开始创建项目、随笔或实验记录后会显示。",
+  actionLabel: recentFiles[0] ? "打开" : "",
+  run: recentFiles[0] ? (() => openVaultPath(recentFiles[0].path)) : null,
+  tone: "is-recent"
+});
+if (recentFiles.length > 1) {
+  const recentList = recentCard.createEl("ul", { cls: "yro-recent-mini" });
+  for (const file of recentFiles.slice(1)) {
+    const item = recentList.createEl("li");
+    item.createEl("span", { text: file.basename });
+    item.createEl("time", { text: formatFileTime(file.stat.mtime) });
+  }
+}
 
 const createPanel = shell.createEl("section", { cls: "yro-create-panel" });
 const createCopy = createPanel.createEl("div", { cls: "yro-create-copy" });
@@ -362,20 +525,11 @@ for (const [kind, label] of [["essay", "写随笔"], ["memo", "记备忘"], ["re
     }
   });
 }
-const reminderFile = app.vault.getAbstractFileByPath(reminderPath);
-if (reminderFile) {
-  const reminderText = await app.vault.read(reminderFile);
-  const openReminders = reminderText.split(/\r?\n/)
-    .map(line => line.trim())
-    .filter(line => /^-\s+\[\s\]\s+/.test(line))
-    .slice(0, 5)
-    .map(line => line.replace(/^-\s+\[\s\]\s+/, "").replace(/\s+#reminder\b/g, ""));
-  if (openReminders.length) {
-    const feed = capturePanel.createEl("div", { cls: "yro-mini-feed" });
-    feed.createEl("strong", { text: "近期提醒" });
-    const list = feed.createEl("ul");
-    for (const item of openReminders) list.createEl("li", { text: item });
-  }
+if (openReminders.length) {
+  const feed = capturePanel.createEl("div", { cls: "yro-mini-feed" });
+  feed.createEl("strong", { text: "近期提醒" });
+  const list = feed.createEl("ul");
+  for (const item of openReminders.slice(0, 5)) list.createEl("li", { text: item });
 }
 
 const folders = [
@@ -397,11 +551,17 @@ const folders = [
   ["Templates", "99 - template"]
 ];
 
-const noteCount = (path) => app.vault.getMarkdownFiles().filter(file => file.path.startsWith(`${path}/`) || file.path === `${path}.md`).length;
+const filesInFolder = (path) => markdownFiles
+  .filter(file => file.path.startsWith(`${path}/`) || file.path === `${path}.md`);
+const noteCount = (path) => filesInFolder(path).length;
 const projectCount = dv.pages()
   .where(page => page.class === "project" && !page.file.path.startsWith("99 - template/"))
   .length;
 const countLabel = (title, path) => title === "项目库" ? `${projectCount} projects` : `${noteCount(path)} notes`;
+const latestLabel = (path) => {
+  const latest = filesInFolder(path).sort((a, b) => b.stat.mtime - a.stat.mtime)[0];
+  return latest ? `updated ${formatFileTime(latest.stat.mtime)}` : "empty";
+};
 const folderPanel = shell.createEl("section", { cls: "yro-folder-panel" });
 const folderHead = folderPanel.createEl("div", { cls: "yro-section-head" });
 folderHead.createEl("strong", { text: "常用目录" });
@@ -412,7 +572,7 @@ for (const [title, path] of folders) {
   const button = folderGrid.createEl("button", { cls: "yro-folder", attr: { type: "button", "aria-label": title } });
   button.createEl("strong", { text: title });
   button.createEl("span", { text: path });
-  button.createEl("em", { text: countLabel(title, path) });
+  button.createEl("em", { text: `${countLabel(title, path)} · ${latestLabel(path)}` });
   button.addEventListener("click", async () => {
     button.disabled = true;
     try {
@@ -584,8 +744,49 @@ const pages = dv.pages()
   .sort(page => Number(page.priority ?? 99), "asc")
   .array();
 
-const board = dv.el("div", "", { cls: "yro-project-board" });
-board.textContent = "";
+const projectShell = dv.el("div", "", { cls: "yro-project-shell" });
+projectShell.textContent = "";
+
+const toolbar = projectShell.createEl("div", { cls: "yro-project-toolbar" });
+const toolbarCopy = toolbar.createEl("div", { cls: "yro-project-toolbar-copy" });
+toolbarCopy.createEl("span", { text: "PROJECT BOARD" });
+toolbarCopy.createEl("strong", { text: `${pages.length} 个科研项目` });
+toolbarCopy.createEl("p", { text: "项目页仍然是普通 Markdown；这里负责汇总、筛选和快速追加。" });
+
+const projectMetrics = toolbar.createEl("div", { cls: "yro-project-metrics" });
+projectMetrics.createEl("span", { text: `${pages.filter(page => String(page.status ?? "active") === "active").length} active` });
+projectMetrics.createEl("span", { text: `${pages.filter(page => Number(page.priority ?? 99) === 1).length} P1` });
+projectMetrics.createEl("span", { text: `${pages.filter(page => String(page.phase ?? "") === "analysis").length} analysis` });
+
+const filterBar = projectShell.createEl("div", { cls: "yro-project-filters", attr: { "aria-label": "Project filters" } });
+const filters = [
+  { key: "all", label: "全部" },
+  { key: "active", label: "Active", status: "active" },
+  { key: "p1", label: "P1", priority: "1" },
+  { key: "planning", label: "Planning", phase: "planning" },
+  { key: "experiment", label: "Experiment", phase: "experiment" },
+  { key: "analysis", label: "Analysis", phase: "analysis" },
+  { key: "writing", label: "Writing", phase: "writing" }
+];
+const filterButtons = new Map();
+const applyProjectFilter = (filter) => {
+  filterButtons.forEach((button, key) => button.classList.toggle("is-active", key === filter.key));
+  for (const card of projectShell.querySelectorAll(".yro-project-card")) {
+    if (card.classList.contains("yro-empty-card")) continue;
+    const visible = filter.key === "all"
+      || (filter.status && card.dataset.status === filter.status)
+      || (filter.phase && card.dataset.phase === filter.phase)
+      || (filter.priority && card.dataset.priority === filter.priority);
+    card.toggleAttribute("hidden", !visible);
+  }
+};
+for (const filter of filters) {
+  const button = filterBar.createEl("button", { text: filter.label, attr: { type: "button" } });
+  filterButtons.set(filter.key, button);
+  button.addEventListener("click", () => applyProjectFilter(filter));
+}
+
+const board = projectShell.createEl("div", { cls: "yro-project-board" });
 
 if (!pages.length) {
   const empty = board.createEl("article", { cls: "yro-project-card yro-empty-card" });
@@ -612,6 +813,9 @@ for (const page of pages) {
   const title = text.match(/^#\s+(.+?)\s*$/m)?.[1]?.trim() || page.file.name.replace(/_/g, " ");
 
   const card = board.createEl("article", { cls: "yro-project-card" });
+  card.dataset.status = String(page.status ?? "active");
+  card.dataset.phase = String(page.phase ?? "planning");
+  card.dataset.priority = String(page.priority ?? "");
   const header = card.createEl("header", { cls: "yro-project-head" });
   const titleBox = header.createEl("div", { cls: "yro-project-titlebox" });
   const titleLink = titleBox.createEl("a", {
@@ -627,6 +831,15 @@ for (const page of pages) {
   const status = header.createEl("div", { cls: "yro-status-stack" });
   status.createEl("span", { cls: "yro-status", text: page.status ?? "active" });
   status.createEl("span", { cls: "yro-phase", text: page.phase ?? "planning" });
+  const openButton = status.createEl("button", { cls: "yro-open-project", text: "打开", attr: { type: "button" } });
+  openButton.addEventListener("click", async () => {
+    try {
+      await openProject(page.file.path);
+    } catch (error) {
+      console.error(error);
+      notify(`打开失败: ${error.message ?? error}`);
+    }
+  });
 
   const progress = card.createEl("div", { cls: "yro-progress-row" });
   const progressTrack = progress.createEl("div", { cls: "yro-progress" });
@@ -705,4 +918,6 @@ for (const page of pages) {
     });
   }
 }
+
+applyProjectFilter(filters[0]);
 ```

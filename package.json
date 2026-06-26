@@ -1,6 +1,6 @@
 {
   "name": "yian-research-os",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A polished Obsidian research home dashboard for project tracking, daily writing, quick memos, reminders, and lab navigation.",
   "main": "main.js",
   "scripts": {
